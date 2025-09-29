@@ -1,24 +1,26 @@
 ---
 - name: Set up personal dotfiles
   tags: dotfiles
+  become: true
+  become_user: deploy
   block:
     - name: Clone the dotfiles repo into the home directory
       ansible.builtin.shell:
         cmd: |
           set -euo pipefail
-          cd "{{ ansible_env.HOME }}"
+          cd ~
           git init
           git remote add origin https://github.com/TheClooneyCollection/dotfiles.git
           git fetch origin
           git switch -c main --track origin/main
           git branch --set-upstream-to=origin/main main
-        creates: "{{ ansible_env.HOME }}/.git"
+        creates: "~/.git"
       register: cloned_dotfile
 
     - name: Update the dotfiles repo
       ansible.builtin.command:
         cmd: git pull --rebase
-        chdir: "{{ ansible_env.HOME }}"
+        chdir: "~/"
       when: not cloned_dotfile.changed
       register: updated_dotfile
       changed_when: '"Already up to date" not in updated_dotfile.stdout'
