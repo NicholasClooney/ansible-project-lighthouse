@@ -1,0 +1,8 @@
+---
+- name: Bootstrap personal environment
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - core
+    - dotfiles

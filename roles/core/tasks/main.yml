@@ -1,0 +1,27 @@
+---
+- name: Install core CLI packages
+  become: true
+  ansible.builtin.package:
+    name:
+      - tmux
+      - fish
+      - mosh
+      - git
+      - tailscale
+      - vim
+      - rsync
+    state: present
+
+- name: Ensure fish shell is listed in /etc/shells
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/shells
+    line: /usr/bin/fish
+    state: present
+    insertafter: EOF
+
+- name: Set fish as default shell for current user
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    shell: /usr/bin/fish
