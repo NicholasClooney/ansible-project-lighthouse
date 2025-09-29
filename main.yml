@@ -6,3 +6,7 @@
   roles:
     - core
     - dotfiles
+    - deploy_user
+
+    # Run this manually
+    # - ssh_hardening

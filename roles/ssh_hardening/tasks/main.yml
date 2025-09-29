@@ -1,0 +1,30 @@
+---
+- name: Disable SSH root login
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*PermitRootLogin'
+    line: 'PermitRootLogin no'
+    create: false
+    state: present
+    insertafter: EOF
+    validate: '/usr/sbin/sshd -t -f %s'
+  register: sshd_permit_root
+
+- name: Disable SSH password authentication
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    create: false
+    state: present
+    insertafter: EOF
+    validate: '/usr/sbin/sshd -t -f %s'
+  register: sshd_password_auth
+
+- name: Remind to restart sshd manually
+  ansible.builtin.debug:
+    msg: >-
+      SSH configuration updated. Verify {{ deploy_user_name | default('deploy') }} can log in with sudo before running `sudo systemctl restart sshd`.
+  when: sshd_permit_root.changed or sshd_password_auth.changed
