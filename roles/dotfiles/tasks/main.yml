@@ -20,4 +20,4 @@
         chdir: "{{ ansible_env.HOME }}"
       when: not cloned_dotfile.changed
       register: updated_dotfile
-      changed_when: "Already up to date" not in (updated_dotfile.stdout | default(''))
+      changed_when: '"Already up to date" not in updated_dotfile.stdout'
