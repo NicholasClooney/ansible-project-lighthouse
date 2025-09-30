@@ -3,8 +3,8 @@
   become: true
   ansible.builtin.apt:
     update_cache: true
-    upgrade: {{ initialize_upgrade_type }}
-    cache_valid_time: {{ initialize_cache_valid_time }}
+    upgrade: "{{ initialize_upgrade_type }}"
+    cache_valid_time: "{{ initialize_cache_valid_time }}"
 
 - name: Install initialize package set
   become: true

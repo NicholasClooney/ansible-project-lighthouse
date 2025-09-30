@@ -37,9 +37,16 @@
 
 - name: Sync root SSH keys to deploy user
   become: true
-  ansible.builtin.command:
-    cmd: "rsync --archive --chown={{ deploy_user_name_effective }}:{{ deploy_user_name_effective }} /root/.ssh /home/{{ deploy_user_name_effective }}"
-  when: root_ssh_dir.stat.exists | default(false)
+  ansible.builtin.copy:
+    src: /root/.ssh/
+    dest: "/home/{{ deploy_user_name_effective }}/.ssh/"
+    owner: "{{ deploy_user_name_effective }}"
+    group: "{{ deploy_user_name_effective }}"
+    mode: preserve
+    remote_src: true
+  when:
+    - deploy_user_sync_root_keys | bool
+    - root_ssh_dir.stat.exists | default(false)
 
 - name: Verify sudo access for deploy user
   become: true
