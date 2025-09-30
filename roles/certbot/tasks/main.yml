@@ -6,16 +6,64 @@
     state: present
     update_cache: true
 
-- name: Request certificates via Certbot (nginx)
-  become: true
-  ansible.builtin.command:
-    cmd: >-
-      certbot --nginx --non-interactive --agree-tos
-      --email {{ certbot_email }}
-      {{ certbot_domains | map('regex_replace', '^(.*)$', '-d \1') | join(' ') }}
+- name: Ensure Certbot domains are provided when issuance is enabled
+  ansible.builtin.assert:
+    that:
+      - certbot_domains | length > 0
+    fail_msg: "certbot_domains must include at least one domain before requesting certificates"
   when: certbot_issue_certificates | bool
-  register: certbot_issue
-  changed_when: certbot_issue.rc == 0
+
+- name: Obtain certificates via Certbot standalone challenge
+  when: certbot_issue_certificates | bool
+  block:
+    - name: Stop services blocking standalone HTTP challenge
+      become: true
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: stopped
+      loop: "{{ certbot_standalone_services }}"
+      loop_control:
+        label: "{{ item }}"
+      when: certbot_standalone_services | length > 0
+
+    - name: Request certificates via Certbot (standalone)
+      become: true
+      ansible.builtin.command:
+        cmd: >-
+          certbot certonly --standalone --non-interactive --agree-tos
+          --keep-until-expiring --expand
+          --email {{ certbot_email }}
+          {{ certbot_domains | map('regex_replace', '^(.*)$', '-d \1') | join(' ') }}
+      register: certbot_issue
+      changed_when: certbot_issue.rc == 0
+
+  rescue:
+    - name: Ensure services are started after Certbot failure
+      become: true
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop: "{{ certbot_standalone_services }}"
+      loop_control:
+        label: "{{ item }}"
+      when: certbot_standalone_services | length > 0
+
+    - name: Fail when Certbot issuance did not succeed
+      ansible.builtin.fail:
+        msg: "Certbot standalone issuance failed; see previous task output for details."
+
+  always:
+    - name: Ensure services are running after Certbot issuance
+      become: true
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop: "{{ certbot_standalone_services }}"
+      loop_control:
+        label: "{{ item }}"
+      when: certbot_standalone_services | length > 0
 
 - name: Ensure Certbot timer is enabled
   become: true
@@ -24,10 +72,3 @@
     enabled: true
     state: started
     daemon_reload: true
-
-- name: Ensure legacy Certbot cron is absent
-  become: true
-  ansible.builtin.cron:
-    name: Certbot automatic renewal
-    state: absent
-    user: root

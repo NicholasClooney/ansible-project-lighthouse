@@ -30,6 +30,15 @@ certbot_issue_certificates: false
 certbot_auto_renew: true
 # Certbot registration email for expiry notices and ToS
 certbot_admin_email: "admin@example.com"
+# Domains to request via Certbot (include each site explicitly and point DNS to this host)
+certbot_domains:
+  - "example.com"
+  - "analytics.example.com"
+  # - "proxy-one.example.com"
+  # - "proxy-two.example.com"
+# Services stopped temporarily so Certbot standalone can bind ports 80/443
+# certbot_standalone_services:
+#   - nginx
 
 # === Firewall (UFW) rules ===
 #

@@ -16,14 +16,14 @@
       tags: [firewall]
     - role: swapfile
       tags: [swapfile]
-    - role: nginx
-      tags: [nginx]
-    - role: v2ray
-      tags: [v2ray]
     - role: certbot
       tags: [certbot]
-    - role: umami_nginx
-      tags: [umami_nginx]
+    - role: v2ray
+      tags: [v2ray]
+    - role: nginx
+      tags: [nginx]
+    # - role: umami_nginx
+    #   tags: [umami_nginx]
 
     # Run this manually
     # - ssh_hardening
