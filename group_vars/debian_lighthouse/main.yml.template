@@ -1,0 +1,14 @@
+---
+primary_domain: "example.com"
+analytics_domain: "analytics.example.com"
+certbot_admin_email: "admin@example.com"
+umami_site_name: "Personal Blog"
+umami_docker_image: "ghcr.io/umami-software/umami:postgresql-latest"
+umami_container_port: 3000
+umami_docker_compose_dir: "/opt/umami"
+umami_postgres_user: "umami"
+umami_postgres_db: "umami"
+umami_postgres_host: "postgres"
+nginx_dashboard_allowlist:
+  - "127.0.0.1/32"  # update with remote access CIDRs or IPs
+swapfile_size_mb: 1024

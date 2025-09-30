@@ -35,3 +35,7 @@ Temporary Items
 *.icloud
 
 # End of https://www.toptal.com/developers/gitignore/api/macos
+# Local Ansible configuration copies
+inventory/hosts.yml
+group_vars/debian_lighthouse/main.yml
+group_vars/debian_lighthouse/vault.yml
