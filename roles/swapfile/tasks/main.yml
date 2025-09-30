@@ -3,7 +3,31 @@
   ansible.builtin.set_fact:
     swapfile_enabled: "{{ (swapfile_size_mb | int) > 0 }}"
 
-- name: Ensure swap is disabled when size is zero
+- name: Check if swapfile is currently active
+  become: true
+  ansible.builtin.command:
+    argv:
+      - grep
+      - -F
+      - -q
+      - "{{ swapfile_path }} "
+      - /proc/swaps
+  register: swapfile_active_check
+  changed_when: false
+  failed_when: false
+
+- name: Disable swapfile when size is zero
+  become: true
+  ansible.builtin.command:
+    argv:
+      - swapoff
+      - "{{ swapfile_path }}"
+  when:
+    - not swapfile_enabled
+    - swapfile_active_check.rc == 0
+  changed_when: swapfile_active_check.rc == 0
+
+- name: Ensure swapfile entry is removed from fstab when disabled
   become: true
   ansible.posix.mount:
     name: none
@@ -65,12 +89,13 @@
     state: present
   when: swapfile_enabled
 
-- name: Enable swapfile
+- name: Activate swapfile
   become: true
-  ansible.posix.mount:
-    name: none
-    src: "{{ swapfile_path }}"
-    fstype: swap
-    opts: sw
-    state: mounted
-  when: swapfile_enabled
+  ansible.builtin.command:
+    argv:
+      - swapon
+      - "{{ swapfile_path }}"
+  when:
+    - swapfile_enabled
+    - swapfile_active_check.rc != 0
+  changed_when: swapfile_active_check.rc != 0
