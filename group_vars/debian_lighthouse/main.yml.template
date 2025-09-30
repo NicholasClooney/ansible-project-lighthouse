@@ -1,19 +1,39 @@
 ---
-primary_domain: "example.com"
-analytics_domain: "analytics.example.com"
-certbot_admin_email: "admin@example.com"
-umami_site_name: "Personal Blog"
-umami_docker_image: "ghcr.io/umami-software/umami:postgresql-latest"
-umami_container_port: 3000
-umami_docker_compose_dir: "/opt/umami"
-umami_postgres_user: "umami"
-umami_postgres_db: "umami"
-umami_postgres_host: "postgres"
-nginx_dashboard_allowlist:
-  - "127.0.0.1/32"  # update with remote access CIDRs or IPs
+# === Deploy user ===
+#
+# If true, deploy_user role syncs root's authorized_keys
+deploy_user_sync_root_keys: false
+
+# === System tuning ===
+#
+# swapfile role uses this size (MB) when provisioning swap
 swapfile_size_mb: 1024
 
-# Firewall configuration
+# === Nginx/analytics access control ===
+#
+# CIDR/IPs allowed to reach the Umami dashboard via umami_nginx
+nginx_dashboard_allowlist:
+  - "127.0.0.1/32"
+
+# === Domains ===
+#
+# Used by certbot role when requesting site certificates
+primary_domain: "example.com"
+# Shared by certbot + umami_nginx site template for analytics host
+analytics_domain: "analytics.example.com"
+
+# === Certbot ===
+#
+# Toggle ACME issuance in certbot role
+certbot_issue_certificates: false
+# Ensures packaged systemd timer stays enabled
+certbot_auto_renew: true
+# Certbot registration email for expiry notices and ToS
+certbot_admin_email: "admin@example.com"
+
+# === Firewall (UFW) rules ===
+#
+# Rules required so nginx serves the primary domain
 firewall_allow_rules:
   - proto: tcp
     port: 80
@@ -21,22 +41,34 @@ firewall_allow_rules:
   - proto: tcp
     port: 443
     comment: "Allow HTTPS"
+# Prevents SSH access except via manual firewall changes
 firewall_deny_rules:
   - proto: tcp
     port: 22
     comment: "Deny public SSH"
 
-# V2Ray configuration (replace with real config JSON)
+# === Umami application ===
+#
+# Human-friendly label displayed in Umami UI
+umami_site_name: "Personal Blog"
+# Docker image used by docker_umami role
+umami_docker_image: "ghcr.io/umami-software/umami:postgresql-latest"
+# Port exposed by the Umami container for nginx proxying
+umami_container_port: 3000
+# Directory where docker_umami places compose stack files
+umami_docker_compose_dir: "/opt/umami"
+# Database user referenced by docker compose and app config
+umami_postgres_user: "umami"
+# Database name created for Umami
+umami_postgres_db: "umami"
+# Hostname of the Postgres service within the compose network
+umami_postgres_host: "postgres"
+
+# === V2Ray ===
+#
+# Template consumed by v2ray role; replace with production-ready JSON
 v2ray_config_json: |
   {
     "inbounds": [],
     "outbounds": []
   }
-
-# Certbot
-certbot_issue_certificates: false
-certbot_auto_renew: true
-certbot_auto_renew_cron: "0 3 * * *"
-
-# Deploy user
-deploy_user_sync_root_keys: false
