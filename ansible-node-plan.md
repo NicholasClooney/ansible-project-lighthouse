@@ -5,9 +5,9 @@
 2. [x] Add `group_vars/debian_lighthouse/main.yml` with domains, emails, and Umami vars.
 3. [x] Define `group_vars/debian_lighthouse/vault.yml` (sensitive values like Umami hash salt) and document vault usage.
 4. [x] Implement `initialize` role (system update, required packages, docker enablement) while avoiding duplicates already covered by `core`.
-5. [ ] Implement `firewall` role (UFW reset, rules, enable).
-6. [ ] Implement `swapfile` role (optional via vars).
-7. [ ] Implement web stack roles: `nginx`, `v2ray`, `certbot`, `umami_nginx`.
+5. [x] Implement `firewall` role (UFW reset, rules, enable).
+6. [x] Implement `swapfile` role (optional via vars).
+7. [x] Implement web stack roles: `nginx`, `v2ray`, `certbot`, `umami_nginx`.
 8. [ ] Implement `docker_umami` role (compose stack, configs, service management).
 9. [ ] Implement `backups` role (script + cron).
 10. [ ] Assemble main playbook invoking roles in dependency order with handlers.
@@ -22,12 +22,12 @@
 - Assume Tailscale (or other remote access tooling) is pre-installed and connected manually before running this playbook.
 
 ## Role Breakdown
-- **`initialize`**: Run apt upgrade, install required packages not already installed by `core` (`curl`, `wget`, `unzip`, `htop`, `ufw`, `docker.io`, `docker-compose-plugin`), enable Docker service.
+- **`initialize`**: Run apt upgrade, install required packages not already installed by `core` (`curl`, `wget`, `unzip`, `htop`, `ufw`, `docker.io`), enable Docker service.
 - **`firewall`**: Reset UFW state, allow 80/443, deny 22, enable firewall and verify status.
 - **`swapfile`**: Create/manage optional 1 GB swapfile controlled by variable.
 - **`nginx`**: Install Nginx, deploy templated site configs (main site + Umami proxy pieces), manage reloads.
-- **`v2ray`**: Install via upstream script, template config, restart service.
-- **`certbot`**: Install Certbot and Nginx plugin, request certificates for primary and analytics domains, configure renew cron.
+- **`v2ray`**: Install via upstream `go.sh` installer, template config, restart service.
+- **`certbot`**: Install Certbot and Nginx plugin, optionally request certificates, rely on the packaged systemd timer for renewals.
 - **`docker_umami`**: Prepare `/opt/umami`, template `.env`, `docker-compose.yml`, optional `postgres.conf`, ensure compose stack running.
 - **`umami_nginx`**: Provide analytics nginx site with restricted dashboard access (configurable subnet/IP allowlist) and public tracking endpoints, enable site, reload service.
 - **`backups`**: Deploy Postgres dump script and cron job cleaning old backups.
