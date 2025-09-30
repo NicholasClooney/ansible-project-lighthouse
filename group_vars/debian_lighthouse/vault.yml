@@ -1,4 +1,0 @@
----
-# Encrypt this file with ansible-vault before storing real secrets.
-umami_postgres_password: "CHANGE_ME"
-umami_hash_salt: "CHANGE_ME"
