@@ -46,6 +46,10 @@ ansible-playbook -i inventory/hosts.yml main.yml --limit debian_lighthouse --ask
 ```
 
 By default the play gathers facts and runs the `core`, `deploy_user`, and `initialize` roles (with additional roles to be added as they are completed). Use `--tags` or `--skip-tags` as needed once more roles are in place.
+To run only the `initialize` role during development:
+```bash
+ansible-playbook -i inventory/hosts.yml main.yml --limit debian_lighthouse --tags initialize
+```
 
 ## Linting & Validation
 Install tooling:
