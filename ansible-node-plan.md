@@ -6,7 +6,7 @@
 3. [x] Define `group_vars/debian_lighthouse/vault.yml` (sensitive values like Umami hash salt) and document vault usage.
 4. [x] Implement `initialize` role (system update, required packages, docker enablement) while avoiding duplicates already covered by `core`.
 5. [x] Implement `firewall` role (UFW reset, rules, enable).
-6. [x] Implement `swapfile` role (optional via vars).
+6. [x] Implement `swapfile` role (optional via vars, now activates via `swapon`).
 7. [x] Implement web stack roles: `nginx`, `v2ray`, `certbot`, `umami_nginx`.
 8. [ ] Implement `docker_umami` role (compose stack, configs, service management).
 9. [ ] Implement `backups` role (script + cron).
