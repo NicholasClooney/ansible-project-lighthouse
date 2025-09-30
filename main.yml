@@ -10,6 +10,8 @@
       tags: [deploy_user]
     - role: initialize
       tags: [initialize]
+    - role: locales
+      tags: [locales]
     - role: firewall
       tags: [firewall]
     - role: swapfile

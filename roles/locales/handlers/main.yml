@@ -1,0 +1,6 @@
+---
+- name: Generate locales
+  become: true
+  ansible.builtin.command:
+    cmd: "{{ locales_generate_command }}"
+  changed_when: true

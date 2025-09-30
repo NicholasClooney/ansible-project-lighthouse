@@ -1,0 +1,7 @@
+---
+locales_to_generate:
+  - en_US.UTF-8
+  - en_GB.UTF-8
+  - en_AU.UTF-8
+locales_locale_file: /etc/locale.gen
+locales_generate_command: /usr/sbin/locale-gen
