@@ -4,11 +4,9 @@ This role installs and manages the base Nginx package on Debian-based hosts. It 
 
 ## Prerequisites
 - **Inventory entry**: Update `inventory/hosts.yml` so `ansible_host` points at the real server address and the SSH user (default `deploy`) matches your access method.
-- **Group variables**: In `group_vars/debian_lighthouse/main.yml`, set real values for `primary_domain`, `analytics_domain`, `certbot_admin_email`, and adjust `nginx_dashboard_allowlist` to list the CIDR/IP ranges allowed to reach the Umami dashboard.
-- **Vault secrets**: Fill in `group_vars/debian_lighthouse/vault.yml` with production secrets and encrypt it with `ansible-vault` before committing or running against a live host.
-- **Optional config template**: Leave `nginx_main_config_template` at its default (`null`) to keep the upstream `nginx.conf`. If you need a custom main config, add a Jinja2 template under `roles/nginx/templates/` (or another accessible role path) and set `nginx_main_config_template` to that filename in your group vars.
-- **Extra modules**: Extend `nginx_extra_packages` in your inventory vars when additional Debian packages (for example `nginx-extras` or specific dynamic modules) are required.
-- **Site definitions**: Ensure downstream roles that depend on Nginx (such as `umami_nginx`) provide their site configuration files so the web server has content to serve once installed.
+- **Optional config template**: Leave `nginx_main_config_template` at its default (`null`) to keep the upstream `nginx.conf`. If you need a custom main config, add a Jinja2 template under `roles/nginx/templates/` (or another accessible role path) and set `nginx_main_config_template` to that filename in your inventory or group vars.
+- **Extra modules**: Extend `nginx_extra_packages` when additional Debian packages (for example `nginx-extras` or specific dynamic modules) are required.
+- **Downstream roles**: When layering Certbot, Umami, or other site roles, follow their documentation for the extra group variables and secrets they require; the base nginx install does not depend on them.
 
 ## Variables
 | Variable | Default | Description |
@@ -20,7 +18,7 @@ This role installs and manages the base Nginx package on Debian-based hosts. It 
 | `nginx_main_config_template` | `null` | Optional template file to copy to `/etc/nginx/nginx.conf`. |
 
 ## Usage
-1. Confirm inventory, group vars, and vault secrets are populated as described above.
+1. Confirm the target host is defined in the inventory and adjust optional variables (such as `nginx_main_config_template` or `nginx_extra_packages`) as needed.
 2. (Optional) Provide a custom `nginx.conf` template and set `nginx_main_config_template` accordingly.
 3. Run a quick syntax check before touching the host: `ANSIBLE_LOCAL_TEMP=./.ansible/tmp ansible-playbook --syntax-check main.yml`.
 4. Apply the role on its own with `ansible-playbook main.yml --tags nginx`, or run the full play to configure the rest of the stack.
