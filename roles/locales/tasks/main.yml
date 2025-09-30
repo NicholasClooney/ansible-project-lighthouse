@@ -10,7 +10,7 @@
   become: true
   ansible.builtin.lineinfile:
     path: "{{ locales_locale_file }}"
-    regexp: "^#?\s*{{ item | regex_escape }}\s"
+    regexp: '^#?\s*{{ item | regex_escape }}\s+UTF-8'
     line: "{{ item }} UTF-8"
     state: present
   loop: "{{ locales_to_generate }}"
