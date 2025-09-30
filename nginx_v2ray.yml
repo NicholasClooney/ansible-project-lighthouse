@@ -1,0 +1,21 @@
+---
+# Quick-start playbook for provisioning nginx + v2ray only.
+#
+# Preparation checklist:
+# 1. Define the target host (e.g. `lighthouse`) in `inventory/hosts.yml` with working SSH access.
+# 2. Populate controller-side configs under `files/v2ray/` (at minimum `config.json`; add any nginx snippets you reference).
+# 3. Review `group_vars/debian_lighthouse/main.yml` (or the relevant group/host vars) and adjust the `v2ray_*` settings if your files live elsewhere.
+# 4. Run `ansible-playbook playbooks/nginx_v2ray.yml --syntax-check` to validate before applying.
+#
+# Execute with:
+#   ANSIBLE_LOCAL_TEMP=./.ansible/tmp ANSIBLE_GALAXY_CACHE_DIR=./.ansible/galaxy_cache \
+#   ansible-playbook -i inventory/hosts.yml playbooks/nginx_v2ray.yml
+#
+# Use `--tags nginx` or `--tags v2ray` if you need to run one role at a time.
+- name: Configure nginx base service and V2Ray
+  hosts: lighthouse
+  become: true
+
+  roles:
+    - role: nginx
+    - role: v2ray
