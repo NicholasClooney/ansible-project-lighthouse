@@ -7,7 +7,7 @@
 - name: Download V2Ray install script
   become: true
   ansible.builtin.get_url:
-    url: https://install.direct/go.sh
+    url: https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh
     dest: "{{ v2ray_install_script_path }}"
     mode: '0755'
   when: not v2ray_binary.stat.exists
