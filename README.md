@@ -8,7 +8,7 @@ Ansible automation for rebuilding the Project Lighthouse droplet on Debian 13. 
 - `group_vars/debian_lighthouse/vault.yml.template` – Template for sensitive values; copy to `vault.yml`, fill in secrets, then encrypt with Ansible Vault.
 - `roles/initialize/` – Packages/dist-upgrade/Docker setup for the new node.
 - `roles/core/`, `roles/deploy_user/` – Existing roles that manage CLI tooling and the deploy account.
-- `roles/firewall/`, `roles/swapfile/` – Network hardening and optional swap management.
+- `roles/firewall/`, `roles/swapfile/`, `roles/locales/` – Network hardening, optional swap management, and locale activation.
 - `roles/nginx/`, `roles/v2ray/`, `roles/certbot/`, `roles/umami_nginx/` – Web/proxy foundation to be extended with site-specific configs.
 - `ansible-node-plan.md` – Work plan & checklist as the remaining roles are implemented.
 - `main.yml` – Entry-point play that will be extended with the new roles as they come online.
@@ -54,7 +54,7 @@ If you encrypted `vault.yml`, supply the password at runtime:
 ansible-playbook -i inventory/hosts.yml main.yml --limit debian_lighthouse --ask-vault-pass
 ```
 
-By default the play gathers facts and runs the `core`, `deploy_user`, `initialize`, `firewall`, `swapfile`, `nginx`, `v2ray`, `certbot`, and `umami_nginx` roles. Use `--tags` or `--skip-tags` as needed during development.
+By default the play gathers facts and runs the `core`, `deploy_user`, `initialize`, `locales`, `firewall`, `swapfile`, `nginx`, `v2ray`, `certbot`, and `umami_nginx` roles. Use `--tags` or `--skip-tags` as needed during development.
 To run only the `initialize` role during development:
 ```bash
 ansible-playbook -i inventory/hosts.yml main.yml --limit debian_lighthouse --tags initialize

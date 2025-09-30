@@ -7,13 +7,14 @@
 4. [x] Implement `initialize` role (system update, required packages, docker enablement) while avoiding duplicates already covered by `core`.
 5. [x] Implement `firewall` role (UFW reset, rules, enable).
 6. [x] Implement `swapfile` role (optional via vars, now activates via `swapon`).
-7. [x] Implement web stack roles: `nginx`, `v2ray`, `certbot`, `umami_nginx`.
-8. [ ] Implement `docker_umami` role (compose stack, configs, service management).
-9. [ ] Implement `backups` role (script + cron).
-10. [ ] Assemble main playbook invoking roles in dependency order with handlers.
-11. [ ] Update `README.md` with run instructions and required secrets.
-12. [x] Add ansible-lint configuration and document lint workflow.
-13. [ ] Draft and publish running blog recap of the automation work.
+7. [x] Implement locale management role.
+8. [x] Implement web stack roles: `nginx`, `v2ray`, `certbot`, `umami_nginx`.
+9. [ ] Implement `docker_umami` role (compose stack, configs, service management).
+10. [ ] Implement `backups` role (script + cron).
+11. [ ] Assemble main playbook invoking roles in dependency order with handlers.
+12. [ ] Update `README.md` with run instructions and required secrets.
+13. [x] Add ansible-lint configuration and document lint workflow.
+14. [ ] Draft and publish running blog recap of the automation work.
 
 ## Plan Overview
 - Build an idempotent Ansible play that provisions a fresh Debian 13 droplet for the blog, proxy, and analytics stack, aligning with the documented migration plan while skipping any migration of existing data.
@@ -25,6 +26,7 @@
 - **`initialize`**: Run apt upgrade, install required packages not already installed by `core` (`curl`, `wget`, `unzip`, `htop`, `ufw`, `docker.io`), enable Docker service.
 - **`firewall`**: Reset UFW state, allow 80/443, deny 22, enable firewall and verify status.
 - **`swapfile`**: Create/manage optional 1 GB swapfile controlled by variable.
+- **`locales`**: Ensure required UTF-8 locales are activated via `locale-gen`, configurable via inventory vars.
 - **`nginx`**: Install Nginx, deploy templated site configs (main site + Umami proxy pieces), manage reloads.
 - **`v2ray`**: Install via upstream `go.sh` installer, template config, restart service.
 - **`certbot`**: Install Certbot and Nginx plugin, optionally request certificates, rely on the packaged systemd timer for renewals.
@@ -35,7 +37,7 @@
 ## Main Playbook Flow
 - Target inventory group `debian_lighthouse`.
 - Pre-tasks: include `core`, `deploy_user`, `ssh_hardening` as-needed.
-- Role order: `initialize → firewall → swapfile → nginx → v2ray → certbot → docker_umami → umami_nginx → backups` with handlers for service restarts.
+- Role order: `initialize → locales → firewall → swapfile → nginx → v2ray → certbot → docker_umami → umami_nginx → backups` with handlers for service restarts.
 - Use centralized variables for domains, access control allowlists, certbot email, Umami secrets.
 
 ## Project Structure
