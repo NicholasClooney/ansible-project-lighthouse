@@ -1,0 +1,4 @@
+---
+profile: production
+exclude_paths:
+  - group_vars/debian_lighthouse/vault.yml

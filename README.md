@@ -17,6 +17,7 @@ Ansible automation for rebuilding the Project Lighthouse droplet on Debian 13. 
 - Ansible 2.15+ (controller machine).
 - SSH access to the target host (root or a sudo-capable user). Remote-access tooling such as Tailscale should already be installed manually.
 - Python available on the target (default on Debian 13).
+- `ansible-lint` for static checks (install via `pip install -r requirements-dev.txt` or `pipx install ansible-lint`).
 
 ## Before You Run the Playbook
 1. **Create local config from templates** (if not already present):
@@ -45,6 +46,19 @@ ansible-playbook -i inventory/hosts.yml main.yml --limit debian_lighthouse --ask
 ```
 
 By default the play gathers facts and runs the `core`, `deploy_user`, and `initialize` roles (with additional roles to be added as they are completed). Use `--tags` or `--skip-tags` as needed once more roles are in place.
+
+## Linting & Validation
+Install tooling:
+```bash
+pip install -r requirements-dev.txt
+```
+
+Run the Ansible linter from the repo root:
+```bash
+./scripts/lint.sh
+```
+
+Pass extra paths or flags as needed, e.g. `./scripts/lint.sh roles/initialize`.
 
 ## Next Steps
 Follow `ansible-node-plan.md` for the outstanding work items (firewall, swapfile, web stack, Umami services, backups, and documentation updates). Each completed milestone should be checked off in that file and reflected in this README.

@@ -12,6 +12,7 @@
 9. [ ] Implement `backups` role (script + cron).
 10. [ ] Assemble main playbook invoking roles in dependency order with handlers.
 11. [ ] Update `README.md` with run instructions and required secrets.
+12. [x] Add ansible-lint configuration and document lint workflow.
 
 ## Plan Overview
 - Build an idempotent Ansible play that provisions a fresh Debian 13 droplet for the blog, proxy, and analytics stack, aligning with the documented migration plan while skipping any migration of existing data.
