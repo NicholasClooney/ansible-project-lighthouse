@@ -6,6 +6,7 @@
   roles:
     - core
     - deploy_user
+    - initialize
 
     # Run this manually
     # - ssh_hardening

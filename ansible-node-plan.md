@@ -4,7 +4,7 @@
 1. [x] Create/validate `inventory/hosts.yml` entry for `debian_lighthouse` group.
 2. [x] Add `group_vars/debian_lighthouse/main.yml` with domains, emails, and Umami vars.
 3. [x] Define `group_vars/debian_lighthouse/vault.yml` (sensitive values like Umami hash salt) and document vault usage.
-4. [ ] Implement `initialize` role (system update, required packages, docker enablement) while avoiding duplicates already covered by `core`.
+4. [x] Implement `initialize` role (system update, required packages, docker enablement) while avoiding duplicates already covered by `core`.
 5. [ ] Implement `firewall` role (UFW reset, rules, enable).
 6. [ ] Implement `swapfile` role (optional via vars).
 7. [ ] Implement web stack roles: `nginx`, `v2ray`, `certbot`, `umami_nginx`.
