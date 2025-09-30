@@ -6,7 +6,6 @@ initialize_packages:
   - htop
   - ufw
   - docker.io
-  - docker-compose-plugin
 # Use 'dist' for dist-upgrade (allows dependency changes); swap to 'yes' for safer upgrades.
 initialize_upgrade_type: dist
 initialize_cache_valid_time: 3600
