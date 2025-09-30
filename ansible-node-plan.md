@@ -1,18 +1,17 @@
 # Ansible Node Setup Plan
 
 ## Checklist
-1. [ ] Create/validate `inventory/hosts.yml` entry for `debian_lighthouse` group.
-2. [ ] Add `group_vars/debian_lighthouse/main.yml` with domains, emails, and Umami vars.
-3. [ ] Define `group_vars/debian_lighthouse/vault.yml` (sensitive values like Umami hash salt) and document vault usage.
-4. [ ] Stub role directory scaffolding for all new roles.
-5. [ ] Implement `initialize` role (system update, required packages, docker enablement) while avoiding duplicates already covered by `core`.
-6. [ ] Implement `firewall` role (UFW reset, rules, enable).
-7. [ ] Implement `swapfile` role (optional via vars).
-8. [ ] Implement web stack roles: `nginx`, `v2ray`, `certbot`, `umami_nginx`.
-9. [ ] Implement `docker_umami` role (compose stack, configs, service management).
-10. [ ] Implement `backups` role (script + cron).
-11. [ ] Assemble main playbook invoking roles in dependency order with handlers.
-12. [ ] Update `README.md` with run instructions and required secrets.
+1. [x] Create/validate `inventory/hosts.yml` entry for `debian_lighthouse` group.
+2. [x] Add `group_vars/debian_lighthouse/main.yml` with domains, emails, and Umami vars.
+3. [x] Define `group_vars/debian_lighthouse/vault.yml` (sensitive values like Umami hash salt) and document vault usage.
+4. [ ] Implement `initialize` role (system update, required packages, docker enablement) while avoiding duplicates already covered by `core`.
+5. [ ] Implement `firewall` role (UFW reset, rules, enable).
+6. [ ] Implement `swapfile` role (optional via vars).
+7. [ ] Implement web stack roles: `nginx`, `v2ray`, `certbot`, `umami_nginx`.
+8. [ ] Implement `docker_umami` role (compose stack, configs, service management).
+9. [ ] Implement `backups` role (script + cron).
+10. [ ] Assemble main playbook invoking roles in dependency order with handlers.
+11. [ ] Update `README.md` with run instructions and required secrets.
 
 ## Plan Overview
 - Build an idempotent Ansible play that provisions a fresh Debian 13 droplet for the blog, proxy, and analytics stack, aligning with the documented migration plan while skipping any migration of existing data.
@@ -41,7 +40,7 @@
 - `inventory/hosts.yml`: define new droplet host/group.
 - `group_vars/debian_lighthouse/main.yml`: non-secret configuration.
 - `group_vars/debian_lighthouse/vault.yml`: secrets encrypted with Vault.
-- `roles/<role_name>/`: each new role with `tasks/`, `templates/`, `handlers/`, `defaults/` as needed.
+- `roles/<role_name>/`: each role will be added with `tasks/`, `templates/`, `handlers/`, `defaults/` when implemented.
 - `main.yml`: orchestrating playbook invoking roles.
 - `README.md`: execution instructions, vault usage, dependency notes.
 - `scripts/` (optional): helper scripts for vault management or service checks.
