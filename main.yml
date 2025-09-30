@@ -4,15 +4,24 @@
   gather_facts: true
 
   roles:
-    - core
-    - deploy_user
-    - initialize
-    - firewall
-    - swapfile
-    - nginx
-    - v2ray
-    - certbot
-    - umami_nginx
+    - role: core
+      tags: [core]
+    - role: deploy_user
+      tags: [deploy_user]
+    - role: initialize
+      tags: [initialize]
+    - role: firewall
+      tags: [firewall]
+    - role: swapfile
+      tags: [swapfile]
+    - role: nginx
+      tags: [nginx]
+    - role: v2ray
+      tags: [v2ray]
+    - role: certbot
+      tags: [certbot]
+    - role: umami_nginx
+      tags: [umami_nginx]
 
     # Run this manually
     # - ssh_hardening
