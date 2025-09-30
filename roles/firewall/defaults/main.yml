@@ -1,0 +1,17 @@
+---
+firewall_reset: true
+firewall_default_incoming_policy: deny
+firewall_default_outgoing_policy: allow
+firewall_allow_rules:
+  - proto: tcp
+    port: 80
+    comment: "Allow HTTP"
+  - proto: tcp
+    port: 443
+    comment: "Allow HTTPS"
+firewall_deny_rules:
+  - proto: tcp
+    port: 22
+    comment: "Deny public SSH"
+firewall_logging: low
+firewall_enable: true

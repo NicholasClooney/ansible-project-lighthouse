@@ -31,3 +31,9 @@ case "${ID:-}" in
 esac
 
 ansible --version
+
+SCRIPT_DIR=$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+ROOT_DIR=$(cd -- "${SCRIPT_DIR}/.." && pwd)
+if [[ -f "${ROOT_DIR}/collections/requirements.yml" ]]; then
+  ansible-galaxy collection install -r "${ROOT_DIR}/collections/requirements.yml"
+fi

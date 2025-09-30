@@ -1,0 +1,37 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ analytics_domain }};
+
+    access_log /var/log/nginx/{{ umami_nginx_site_name }}.access.log;
+    error_log /var/log/nginx/{{ umami_nginx_site_name }}.error.log;
+
+    location = /script.js {
+        proxy_pass http://{{ umami_nginx_upstream_host }}:{{ umami_nginx_upstream_port }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location = /api/collect {
+        proxy_pass http://{{ umami_nginx_upstream_host }}:{{ umami_nginx_upstream_port }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        limit_except POST { deny all; }
+    }
+
+    location / {
+        {% for cidr in nginx_dashboard_allowlist %}
+        allow {{ cidr }};
+        {% endfor %}
+        deny all;
+        proxy_pass http://{{ umami_nginx_upstream_host }}:{{ umami_nginx_upstream_port }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

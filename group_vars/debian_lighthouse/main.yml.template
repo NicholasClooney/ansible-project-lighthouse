@@ -12,3 +12,31 @@ umami_postgres_host: "postgres"
 nginx_dashboard_allowlist:
   - "127.0.0.1/32"  # update with remote access CIDRs or IPs
 swapfile_size_mb: 1024
+
+# Firewall configuration
+firewall_allow_rules:
+  - proto: tcp
+    port: 80
+    comment: "Allow HTTP"
+  - proto: tcp
+    port: 443
+    comment: "Allow HTTPS"
+firewall_deny_rules:
+  - proto: tcp
+    port: 22
+    comment: "Deny public SSH"
+
+# V2Ray configuration (replace with real config JSON)
+v2ray_config_json: |
+  {
+    "inbounds": [],
+    "outbounds": []
+  }
+
+# Certbot
+certbot_issue_certificates: false
+certbot_auto_renew: true
+certbot_auto_renew_cron: "0 3 * * *"
+
+# Deploy user
+deploy_user_sync_root_keys: false

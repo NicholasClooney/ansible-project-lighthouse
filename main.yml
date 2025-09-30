@@ -7,6 +7,12 @@
     - core
     - deploy_user
     - initialize
+    - firewall
+    - swapfile
+    - nginx
+    - v2ray
+    - certbot
+    - umami_nginx
 
     # Run this manually
     # - ssh_hardening

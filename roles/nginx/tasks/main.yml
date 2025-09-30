@@ -1,0 +1,33 @@
+---
+- name: Install Nginx packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ [nginx_package_name] + nginx_extra_packages }}"
+    state: present
+    update_cache: true
+
+- name: Deploy custom nginx.conf when provided
+  become: true
+  ansible.builtin.template:
+    src: "{{ nginx_main_config_template }}"
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: nginx_main_config_template is not none
+  notify: Reload Nginx
+
+- name: Remove default site if requested
+  become: true
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  when: nginx_remove_default_site | bool
+  notify: Reload Nginx
+
+- name: Ensure Nginx service is enabled and running
+  become: true
+  ansible.builtin.service:
+    name: "{{ nginx_service_name }}"
+    state: started
+    enabled: true

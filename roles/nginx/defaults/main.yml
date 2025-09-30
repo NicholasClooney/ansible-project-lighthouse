@@ -1,0 +1,6 @@
+---
+nginx_package_name: nginx
+nginx_extra_packages: []
+nginx_remove_default_site: true
+nginx_service_name: nginx
+nginx_main_config_template: null

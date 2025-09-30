@@ -1,0 +1,6 @@
+---
+- name: Restart V2Ray
+  become: true
+  ansible.builtin.service:
+    name: "{{ v2ray_service_name }}"
+    state: restarted

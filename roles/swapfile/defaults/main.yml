@@ -1,0 +1,4 @@
+---
+swapfile_path: /swapfile
+swapfile_size_mb: 0
+swapfile_fallocate: true

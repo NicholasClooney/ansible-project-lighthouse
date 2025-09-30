@@ -1,0 +1,60 @@
+---
+- name: Ensure UFW package is present
+  become: true
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+    update_cache: true
+
+- name: Reset UFW configuration
+  become: true
+  community.general.ufw:
+    state: reset
+  when: firewall_reset | bool
+
+- name: Set default incoming policy
+  become: true
+  community.general.ufw:
+    direction: incoming
+    policy: "{{ firewall_default_incoming_policy }}"
+
+- name: Set default outgoing policy
+  become: true
+  community.general.ufw:
+    direction: outgoing
+    policy: "{{ firewall_default_outgoing_policy }}"
+
+- name: Configure allowed firewall rules
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto | default('tcp') }}"
+    comment: "{{ item.comment | default(omit) }}"
+    from_ip: "{{ item.from_ip | default(omit) }}"
+    to_ip: "{{ item.to_ip | default(omit) }}"
+  loop: "{{ firewall_allow_rules }}"
+  notify: Reload UFW
+
+- name: Configure denied firewall rules
+  become: true
+  community.general.ufw:
+    rule: deny
+    port: "{{ item.port }}"
+    proto: "{{ item.proto | default('tcp') }}"
+    comment: "{{ item.comment | default(omit) }}"
+    from_ip: "{{ item.from_ip | default(omit) }}"
+    to_ip: "{{ item.to_ip | default(omit) }}"
+  loop: "{{ firewall_deny_rules }}"
+  notify: Reload UFW
+
+- name: Set logging level
+  become: true
+  community.general.ufw:
+    logging: "{{ firewall_logging }}"
+
+- name: Ensure firewall is enabled
+  become: true
+  community.general.ufw:
+    state: enabled
+  when: firewall_enable | bool

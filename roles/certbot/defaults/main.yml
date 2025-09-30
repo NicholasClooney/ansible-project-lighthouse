@@ -1,0 +1,9 @@
+---
+certbot_packages:
+  - certbot
+  - python3-certbot-nginx
+certbot_email: "{{ certbot_admin_email | default('admin@example.com') }}"
+certbot_domains:
+  - "{{ primary_domain | default('example.com') }}"
+  - "{{ analytics_domain | default('analytics.example.com') }}"
+certbot_issue_certificates: false

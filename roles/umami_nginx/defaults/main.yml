@@ -1,0 +1,8 @@
+---
+umami_nginx_site_name: umami
+umami_nginx_template: analytics.conf.j2
+umami_nginx_sites_available_dir: /etc/nginx/sites-available
+umami_nginx_sites_enabled_dir: /etc/nginx/sites-enabled
+umami_nginx_upstream_host: 127.0.0.1
+umami_nginx_upstream_port: "{{ umami_container_port | default(3000) }}"
+umami_nginx_service_name: nginx

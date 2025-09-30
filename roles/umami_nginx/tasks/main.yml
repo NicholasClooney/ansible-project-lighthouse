@@ -1,0 +1,36 @@
+---
+- name: Ensure sites-available directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ umami_nginx_sites_available_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Ensure sites-enabled directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ umami_nginx_sites_enabled_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy Umami Nginx site configuration
+  become: true
+  ansible.builtin.template:
+    src: "{{ umami_nginx_template }}"
+    dest: "{{ umami_nginx_sites_available_dir }}/{{ umami_nginx_site_name }}.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload Nginx
+
+- name: Enable Umami Nginx site
+  become: true
+  ansible.builtin.file:
+    src: "{{ umami_nginx_sites_available_dir }}/{{ umami_nginx_site_name }}.conf"
+    dest: "{{ umami_nginx_sites_enabled_dir }}/{{ umami_nginx_site_name }}.conf"
+    state: link
+  notify: Reload Nginx

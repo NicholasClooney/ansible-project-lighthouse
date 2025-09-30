@@ -1,0 +1,76 @@
+---
+- name: Determine if swapfile should be enabled
+  ansible.builtin.set_fact:
+    swapfile_enabled: "{{ (swapfile_size_mb | int) > 0 }}"
+
+- name: Ensure swap is disabled when size is zero
+  become: true
+  ansible.posix.mount:
+    name: none
+    src: "{{ swapfile_path }}"
+    fstype: swap
+    state: absent
+  when: not swapfile_enabled
+
+- name: Remove swapfile when disabled
+  become: true
+  ansible.builtin.file:
+    path: "{{ swapfile_path }}"
+    state: absent
+  when: not swapfile_enabled
+
+- name: Gather swapfile stats
+  ansible.builtin.stat:
+    path: "{{ swapfile_path }}"
+  register: swapfile_stat
+  when: swapfile_enabled
+
+- name: Create swapfile
+  become: true
+  ansible.builtin.command:
+    cmd: >-
+      {{ 'fallocate -l ' ~ (swapfile_size_mb | int) ~ 'M ' ~ swapfile_path
+         if swapfile_fallocate
+         else 'dd if=/dev/zero of=' ~ swapfile_path ~ ' bs=1M count=' ~ (swapfile_size_mb | int) }}
+    creates: "{{ swapfile_path }}"
+  when: swapfile_enabled
+  register: swapfile_creation
+
+- name: Ensure swapfile permissions are strict
+  become: true
+  ansible.builtin.file:
+    path: "{{ swapfile_path }}"
+    owner: root
+    group: root
+    mode: '0600'
+  when: swapfile_enabled
+
+- name: Initialize swap area
+  become: true
+  ansible.builtin.command:
+    cmd: "mkswap {{ swapfile_path }}"
+  when:
+    - swapfile_enabled
+    - swapfile_creation is defined
+    - swapfile_creation is changed
+  changed_when: swapfile_creation is defined and swapfile_creation is changed
+
+- name: Ensure swapfile entry exists in fstab
+  become: true
+  ansible.posix.mount:
+    name: none
+    src: "{{ swapfile_path }}"
+    fstype: swap
+    opts: sw
+    state: present
+  when: swapfile_enabled
+
+- name: Enable swapfile
+  become: true
+  ansible.posix.mount:
+    name: none
+    src: "{{ swapfile_path }}"
+    fstype: swap
+    opts: sw
+    state: mounted
+  when: swapfile_enabled
