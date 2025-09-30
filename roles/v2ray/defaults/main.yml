@@ -2,7 +2,7 @@
 v2ray_install_script_path: /tmp/v2ray-install.sh
 v2ray_service_name: v2ray
 v2ray_config_path: /usr/local/etc/v2ray/config.json
-v2ray_config_src: config.json
+v2ray_config_src: "{{ playbook_dir }}/files/v2ray/config.json"
 v2ray_config_owner: root
 v2ray_config_group: root
 v2ray_config_mode: '0644'
