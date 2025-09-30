@@ -209,3 +209,41 @@ ansible-playbook -i inventory/hosts.yml main.yml \
 ```
 
 The inverse (`--skip-tags initialize`) will come in handy once other roles are in place. This workflow is invaluable while we stagger development of firewall rules, swap management, and the web stack.
+
+## Reworking Swap Management After Production Feedback
+Once the first droplet run completed we hit a regression: activating swap via the `ansible.posix.mount` module fails on Debian 13 because `mount` cannot coerce the file into a `swap` filesystem. The error surfaced during a playbook run against the live host:
+
+```
+fatal: [lighthouse]: FAILED! => {"changed": false, "msg": "Error mounting none: mount: /home/deploy/none: unknown filesystem type 'swap'.\n       dmesg(1) may have more information after failed mount system call."}
+```
+
+The fix was to follow the traditional `mkswap`/`swapon` flow directly. The role still provisions the file (via `fallocate` or `dd`) and sets strict permissions, but enabling now shells out to `swapon` after confirming the file is not already active. We probe `/proc/swaps` exactly once at the top of the role, reuse the result to short-circuit idempotent runs, and continue managing the fstab entry separately so the swap file persists across reboots:
+
+```yaml
+# roles/swapfile/tasks/main.yml
+- name: Check if swapfile is currently active
+  become: true
+  ansible.builtin.command:
+    argv:
+      - grep
+      - -F
+      - -q
+      - "{{ swapfile_path }} "
+      - /proc/swaps
+  register: swapfile_active_check
+  changed_when: false
+  failed_when: false
+
+- name: Activate swapfile
+  become: true
+  ansible.builtin.command:
+    argv:
+      - swapon
+      - "{{ swapfile_path }}"
+  when:
+    - swapfile_enabled
+    - swapfile_active_check.rc != 0
+  changed_when: swapfile_active_check.rc != 0
+```
+
+Disabling follows the same pattern with `swapoff` guarded by the probe result. Besides eliminating the kernel error, the change makes test reruns faster because no shell commands execute when the file is already active. The `ansible-node-plan.md` checklist now calls out the `swapon` upgrade so future readers know why the role diverges from older mount-based snippets.
