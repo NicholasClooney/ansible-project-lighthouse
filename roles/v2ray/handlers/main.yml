@@ -4,3 +4,9 @@
   ansible.builtin.service:
     name: "{{ v2ray_service_name }}"
     state: restarted
+
+- name: Reload Nginx
+  become: true
+  ansible.builtin.service:
+    name: "{{ v2ray_nginx_service_name }}"
+    state: reloaded

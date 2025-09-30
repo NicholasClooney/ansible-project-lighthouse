@@ -66,9 +66,11 @@ umami_postgres_host: "postgres"
 
 # === V2Ray ===
 #
-# Template consumed by v2ray role; replace with production-ready JSON
-v2ray_config_json: |
-  {
-    "inbounds": [],
-    "outbounds": []
-  }
+# Controller-side path to config.json (relative to roles/v2ray/files/ or absolute)
+v2ray_config_src: config.json
+# Extra helper files copied as-is (no handlers triggered)
+v2ray_extra_files: []
+# Nginx config files copied by the role; reloads nginx when they change
+# v2ray_nginx_files:
+#   - src: nginx/default.conf
+#     dest: /etc/nginx/conf.d/default.conf

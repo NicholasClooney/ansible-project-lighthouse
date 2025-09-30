@@ -21,15 +21,42 @@
   changed_when: v2ray_install.rc == 0
   notify: Restart V2Ray
 
-- name: Deploy V2Ray configuration
+- name: Copy V2Ray configuration
   become: true
-  ansible.builtin.template:
-    src: "{{ v2ray_config_template }}"
+  ansible.builtin.copy:
+    src: "{{ v2ray_config_src }}"
     dest: "{{ v2ray_config_path }}"
-    owner: root
-    group: root
-    mode: '0644'
+    owner: "{{ v2ray_config_owner }}"
+    group: "{{ v2ray_config_group }}"
+    mode: "{{ v2ray_config_mode }}"
   notify: Restart V2Ray
+
+- name: Deploy supporting files for V2Ray
+  become: true
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop: "{{ v2ray_extra_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  when: v2ray_extra_files | length > 0
+
+- name: Deploy Nginx configuration files for V2Ray
+  become: true
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop: "{{ v2ray_nginx_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  when: v2ray_nginx_files | length > 0
+  notify: Reload Nginx
 
 - name: Ensure V2Ray service is enabled and running
   become: true
