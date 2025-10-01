@@ -9,12 +9,13 @@
 6. [x] Implement `swapfile` role (optional via vars, now activates via `swapon`).
 7. [x] Implement locale management role.
 8. [x] Implement web stack roles: `nginx`, `v2ray`, `certbot`, `umami_nginx`.
-9. [ ] Implement `docker_umami` role (compose stack, configs, service management).
-10. [ ] Implement `backups` role (script + cron).
-11. [ ] Assemble main playbook invoking roles in dependency order with handlers.
-12. [ ] Update `README.md` with run instructions and required secrets.
-13. [x] Add ansible-lint configuration and document lint workflow.
-14. [ ] Draft and publish running blog recap of the automation work.
+9. [x] Implement `docker_compose` role (Docker Engine + Compose plugin installation).
+10. [ ] Implement `docker_umami` role (compose stack, configs, service management).
+11. [ ] Implement `backups` role (script + cron).
+12. [ ] Assemble main playbook invoking roles in dependency order with handlers.
+13. [ ] Update `README.md` with run instructions and required secrets.
+14. [x] Add ansible-lint configuration and document lint workflow.
+15. [ ] Draft and publish running blog recap of the automation work.
 
 ## Plan Overview
 - Build an idempotent Ansible play that provisions a fresh Debian 13 droplet for the blog, proxy, and analytics stack, aligning with the documented migration plan while skipping any migration of existing data.
@@ -30,6 +31,7 @@
 - **`nginx`**: Install Nginx, deploy templated site configs (main site + Umami proxy pieces), manage reloads.
 - **`v2ray`**: Install via upstream `go.sh` installer, template config, restart service.
 - **`certbot`**: Install Certbot and Nginx plugin, optionally request certificates, rely on the packaged systemd timer for renewals.
+- **`docker_compose`**: Configure the Docker apt repository and install Docker Engine components plus the Compose plugin.
 - **`docker_umami`**: Prepare `/opt/umami`, template `.env`, `docker-compose.yml`, optional `postgres.conf`, ensure compose stack running.
 - **`umami_nginx`**: Provide analytics nginx site with restricted dashboard access (configurable subnet/IP allowlist) and public tracking endpoints, enable site, reload service.
 - **`backups`**: Deploy Postgres dump script and cron job cleaning old backups.

@@ -22,6 +22,8 @@
       tags: [v2ray]
     - role: nginx
       tags: [nginx]
+    - role: docker_compose
+      tags: [docker_compose]
     # - role: umami_nginx
     #   tags: [umami_nginx]
 

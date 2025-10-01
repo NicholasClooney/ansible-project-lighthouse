@@ -1,0 +1,24 @@
+---
+docker_compose_prerequisites:
+  - ca-certificates
+  - curl
+
+docker_compose_arch_map:
+  x86_64: amd64
+  amd64: amd64
+  aarch64: arm64
+  armv7l: armhf
+  armv6l: armhf
+
+docker_compose_arch: "{{ docker_compose_arch_map[ansible_architecture] | default(ansible_architecture) }}"
+docker_compose_release: "{{ ansible_facts['lsb']['codename'] | default(ansible_distribution_release) }}"
+docker_compose_repo_url: https://download.docker.com/linux/debian
+docker_compose_repo_component: stable
+docker_compose_keyring_path: /etc/apt/keyrings/docker.asc
+
+docker_compose_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
