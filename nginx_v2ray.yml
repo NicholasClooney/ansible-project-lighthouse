@@ -13,9 +13,12 @@
 #
 # Use `--tags nginx` or `--tags v2ray` if you need to run one role at a time.
 - name: Configure nginx base service and V2Ray
-  hosts: lighthouse
-  become: true
+  hosts: all
 
   roles:
-    - role: nginx
+    - role: certbot
+      tags: [certbot]
     - role: v2ray
+      tags: [v2ray]
+    - role: nginx
+      tags: [nginx]
