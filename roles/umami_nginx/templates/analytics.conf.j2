@@ -1,10 +1,25 @@
+# 1) HTTP → HTTPS redirect
 server {
     listen 80;
     listen [::]:80;
     server_name {{ analytics_domain }};
+    return 301 https://$host$request_uri;
+}
 
+# 2) HTTPS site
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name {{ analytics_domain }};
+
+    # Logs
     access_log /var/log/nginx/{{ umami_nginx_site_name }}.access.log;
     error_log /var/log/nginx/{{ umami_nginx_site_name }}.error.log;
+
+    # TLS certs
+    ssl_certificate     /etc/letsencrypt/live/{{ analytics_domain }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ analytics_domain }}/privkey.pem;
+
 
     location = /script.js {
         proxy_pass http://{{ umami_nginx_upstream_host }}:{{ umami_nginx_upstream_port }};
