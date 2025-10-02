@@ -1,44 +1,59 @@
 ---
-- name: Remove conflicting Docker packages from distribution repos
-  become: true
-  ansible.builtin.apt:
-    name: "{{ docker_compose_conflicting_packages }}"
-    state: absent
-    purge: true
+- name: Gather installed package facts
+  ansible.builtin.package_facts:
+    manager: apt
 
-- name: Ensure prerequisite packages for Docker repository are installed
-  become: true
-  ansible.builtin.apt:
-    name: "{{ docker_compose_prerequisites }}"
-    state: present
-    update_cache: true
+- name: Determine missing Docker packages
+  ansible.builtin.set_fact:
+    docker_compose_missing_packages: "{{ docker_compose_packages | difference(ansible_facts.packages.keys() | list) }}"
 
-- name: Ensure Docker apt keyring directory exists
-  become: true
-  ansible.builtin.file:
-    path: "{{ docker_compose_keyring_path | dirname }}"
-    state: directory
-    mode: "0755"
+- name: Determine if Docker packages are already configured
+  ansible.builtin.set_fact:
+    docker_compose_already_configured: "{{ docker_compose_missing_packages | length == 0 }}"
 
-- name: Download Docker apt repository GPG key
-  become: true
-  ansible.builtin.get_url:
-    url: "{{ docker_compose_repo_url }}/gpg"
-    dest: "{{ docker_compose_keyring_path }}"
-    mode: "0644"
+- name: Configure Docker repository and packages
+  when: not docker_compose_already_configured | bool
+  block:
+    - name: Remove conflicting Docker packages from distribution repos
+      become: true
+      ansible.builtin.apt:
+        name: "{{ docker_compose_conflicting_packages }}"
+        state: absent
+        purge: true
 
-- name: Configure Docker apt repository
-  become: true
-  ansible.builtin.apt_repository:
-    repo: >-
-      deb [arch={{ docker_compose_arch }} signed-by={{ docker_compose_keyring_path }}]
-      {{ docker_compose_repo_url }} {{ docker_compose_release }} {{ docker_compose_repo_component }}
-    filename: docker
-    state: present
-    update_cache: true
+    - name: Ensure prerequisite packages for Docker repository are installed
+      become: true
+      ansible.builtin.apt:
+        name: "{{ docker_compose_prerequisites }}"
+        state: present
+        update_cache: true
 
-- name: Install Docker packages
-  become: true
-  ansible.builtin.apt:
-    name: "{{ docker_compose_packages }}"
-    state: present
+    - name: Ensure Docker apt keyring directory exists
+      become: true
+      ansible.builtin.file:
+        path: "{{ docker_compose_keyring_path | dirname }}"
+        state: directory
+        mode: "0755"
+
+    - name: Download Docker apt repository GPG key
+      become: true
+      ansible.builtin.get_url:
+        url: "{{ docker_compose_repo_url }}/gpg"
+        dest: "{{ docker_compose_keyring_path }}"
+        mode: "0644"
+
+    - name: Configure Docker apt repository
+      become: true
+      ansible.builtin.apt_repository:
+        repo: >-
+          deb [arch={{ docker_compose_arch }} signed-by={{ docker_compose_keyring_path }}]
+          {{ docker_compose_repo_url }} {{ docker_compose_release }} {{ docker_compose_repo_component }}
+        filename: docker
+        state: present
+        update_cache: true
+
+    - name: Install Docker packages
+      become: true
+      ansible.builtin.apt:
+        name: "{{ docker_compose_packages }}"
+        state: present
