@@ -100,7 +100,6 @@ all:
 The template is committed to git, while `inventory/hosts.yml` is ignored so each operator can fill in the actual droplet IP locally. Alongside it, we added `group_vars/debian_lighthouse/main.yml.template` to centralize non-secret configuration, and `group_vars/debian_lighthouse/vault.yml.template` for secrets. For example, `main.yml.template` defines the domains, Certbot email, Umami defaults, and a future allowlist for the analytics dashboard:
 
 ```yaml
-primary_domain: "example.com"
 analytics_domain: "analytics.example.com"
 certbot_admin_email: "admin@example.com"
 nginx_dashboard_allowlist:
