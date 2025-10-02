@@ -12,7 +12,7 @@
     docker_compose_already_configured: "{{ docker_compose_missing_packages | length == 0 }}"
 
 - name: Configure Docker repository and packages
-  when: not docker_compose_already_configured | bool
+  when: not (docker_compose_already_configured | bool)
   block:
     - name: Remove conflicting Docker packages from distribution repos
       become: true
