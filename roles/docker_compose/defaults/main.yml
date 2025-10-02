@@ -1,4 +1,13 @@
 ---
+docker_compose_conflicting_packages:
+  - docker.io
+  - docker-doc
+  - docker-compose
+  - docker-compose-plugin
+  - docker-buildx
+  - podman-docker
+  - runc
+
 docker_compose_prerequisites:
   - ca-certificates
   - curl

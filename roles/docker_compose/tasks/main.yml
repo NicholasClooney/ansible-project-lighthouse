@@ -1,4 +1,11 @@
 ---
+- name: Remove conflicting Docker packages from distribution repos
+  become: true
+  ansible.builtin.apt:
+    name: "{{ docker_compose_conflicting_packages }}"
+    state: absent
+    purge: true
+
 - name: Ensure prerequisite packages for Docker repository are installed
   become: true
   ansible.builtin.apt:
