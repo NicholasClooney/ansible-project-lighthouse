@@ -29,13 +29,23 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    location = /api/collect {
+    location = /api/send {
         proxy_pass http://{{ umami_nginx_upstream_host }}:{{ umami_nginx_upstream_port }};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        limit_except POST { deny all; }
+
+        limit_except POST OPTIONS { deny all; }
+
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Access-Control-Allow-Methods "POST, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
+        if ($request_method = OPTIONS) {
+            add_header Content-Length 0;
+            add_header Content-Type text/plain;
+            return 204;
+        }
     }
 
     location / {
