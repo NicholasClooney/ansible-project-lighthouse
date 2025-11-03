@@ -9,6 +9,10 @@ firewall_allow_rules:
   - proto: tcp
     port: 443
     comment: "Allow HTTPS"
+  - direction: in
+    interface: tailscale0
+    proto: any
+    comment: "Allow traffic on Tailscale interface"
 firewall_deny_rules:
   - proto: tcp
     port: 22

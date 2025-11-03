@@ -28,8 +28,13 @@
   become: true
   community.general.ufw:
     rule: allow
-    port: "{{ item.port }}"
-    proto: "{{ item.proto | default('tcp') }}"
+    port: "{{ item.port | default(omit) }}"
+    proto: "{{ item.proto | default(omit) }}"
+    direction: "{{ item.direction | default(omit) }}"
+    interface: "{{ item.interface | default(omit) }}"
+    interface_in: "{{ item.interface_in | default(omit) }}"
+    interface_out: "{{ item.interface_out | default(omit) }}"
+    route: "{{ item.route | default(omit) }}"
     comment: "{{ item.comment | default(omit) }}"
     from_ip: "{{ item.from_ip | default(omit) }}"
     to_ip: "{{ item.to_ip | default(omit) }}"
@@ -40,8 +45,13 @@
   become: true
   community.general.ufw:
     rule: deny
-    port: "{{ item.port }}"
-    proto: "{{ item.proto | default('tcp') }}"
+    port: "{{ item.port | default(omit) }}"
+    proto: "{{ item.proto | default(omit) }}"
+    direction: "{{ item.direction | default(omit) }}"
+    interface: "{{ item.interface | default(omit) }}"
+    interface_in: "{{ item.interface_in | default(omit) }}"
+    interface_out: "{{ item.interface_out | default(omit) }}"
+    route: "{{ item.route | default(omit) }}"
     comment: "{{ item.comment | default(omit) }}"
     from_ip: "{{ item.from_ip | default(omit) }}"
     to_ip: "{{ item.to_ip | default(omit) }}"
