@@ -1,0 +1,19 @@
+---
+- name: Deploy tailscale serve systemd unit
+  become: true
+  ansible.builtin.template:
+    src: tailscale-serve.service.j2
+    dest: "/etc/systemd/system/{{ tailscale_serve_service_name }}.service"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart tailscale serve
+
+- name: Ensure tailscale serve service is enabled and {{ tailscale_serve_state }}
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ tailscale_serve_service_name }}"
+    enabled: "{{ tailscale_serve_enabled }}"
+    state: "{{ tailscale_serve_state }}"
+    daemon_reload: true

@@ -1,0 +1,12 @@
+---
+tailscale_serve_service_name: tailscale-serve-umami
+tailscale_serve_description: Background Tailscale Serve for Umami
+tailscale_serve_bin_path: /usr/bin/tailscale
+tailscale_serve_https_port: 443
+tailscale_serve_backend_url: http://127.0.0.1:3000
+tailscale_serve_restart_policy: 'no'
+tailscale_serve_after: [network-online.target, tailscaled.service]
+tailscale_serve_wants: [network-online.target]
+tailscale_serve_requires: [tailscaled.service]
+tailscale_serve_state: started
+tailscale_serve_enabled: true

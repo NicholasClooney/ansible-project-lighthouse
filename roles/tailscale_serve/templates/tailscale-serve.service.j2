@@ -1,0 +1,15 @@
+[Unit]
+Description={{ tailscale_serve_description }}
+{% if tailscale_serve_after | length > 0 %}After={{ tailscale_serve_after | join(' ') }}
+{% endif %}{% if tailscale_serve_wants | length > 0 %}Wants={{ tailscale_serve_wants | join(' ') }}
+{% endif %}{% if tailscale_serve_requires | length > 0 %}Requires={{ tailscale_serve_requires | join(' ') }}
+{% endif %}
+[Service]
+Type=simple
+ExecStart={{ tailscale_serve_bin_path }} serve --https={{ tailscale_serve_https_port }} {{ tailscale_serve_backend_url }}
+Restart={{ tailscale_serve_restart_policy }}
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

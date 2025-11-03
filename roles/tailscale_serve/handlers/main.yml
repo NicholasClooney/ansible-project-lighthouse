@@ -1,0 +1,6 @@
+---
+- name: Restart tailscale serve
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ tailscale_serve_service_name }}"
+    state: restarted

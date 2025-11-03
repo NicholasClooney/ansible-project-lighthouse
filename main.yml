@@ -32,6 +32,8 @@
         umami_timezone: Europe/London
         umami_bind_address: 127.0.0.1
         umami_listen_port: 3000
+    - role: tailscale_serve
+      tags: [tailscale_serve]
 
     # Run this manually
     # - ssh_hardening
