@@ -30,7 +30,7 @@
       tags: [umami]
       vars:
         umami_timezone: Europe/London
-        umami_bind_address: 0.0.0.0
+        umami_bind_address: 127.0.0.1
         umami_listen_port: 3000
 
     # Run this manually
