@@ -19,7 +19,11 @@ Ansible automation for rebuilding the Project Lighthouse droplet on Debian 13. 
 
 ## Requirements
 - Ansible 2.15+ (controller machine).
-- SSH access to the target host (root or a sudo-capable user). Remote-access tooling such as Tailscale should already be installed manually.
+- SSH access to the target host (root or a sudo-capable user). Remote-access tooling such as Tailscale must be installed and authenticated manually before running the playbook:
+  ```bash
+  curl -fsSL https://tailscale.com/install.sh | sh
+  sudo tailscale up
+  ```
 - Python available on the target (default on Debian 13).
 - `ansible-lint` for static checks (install via `pip install -r requirements-dev.txt` or `pipx install ansible-lint`).
 - Required collections (auto-installed by `scripts/install-ansible.sh`, or run `ansible-galaxy collection install -r collections/requirements.yml`).
